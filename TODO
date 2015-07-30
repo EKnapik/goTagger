@@ -1,0 +1,23 @@
+1. A possible solution would be using a type of negative lookahead with backtracking to
+	determine the current comment style then read till the end of that specific
+	found style. That is looking for a copyright identifier then looking backwards
+	for the current comment style then continuing till the last local use of that
+	style to identify comment blocks where the copyright notice would be contained.
+
+2. Use a differnt type of NLP matching, learning method. The current machine learning 
+	uses a corpus of tagged words and the relation of words in that corpus. Then
+	performs the Vertirbi algorithm (forward backwards algorithm variant) to
+	determine part of speech for each word in the given context.
+
+3. Cosine and word similarity was thought of but under close analysis was rejected
+	because of the coputation required per word. This would be good for analizing
+	mispelling of key words but would be required on each word dramatically
+	increasing the runtime for the program. For instance determining is a given
+	word is copyright or mispelled or several other key words.
+
+4. License Extraction: Currently the program does not look for a copyright license simply
+	a notice. A naive implementation was done using regular expressions but excluded
+	from this published version. The implementaion looked for key common words within
+	comments. For instance the words: license, software, program. Were very common
+	and returned good results but it was decided to not have in the final published
+	version.
