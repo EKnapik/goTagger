@@ -113,9 +113,7 @@ func TestMain(t *testing.T) {
 	case true != lowerCase:
 		t.Errorf("lower case c not matched\n")
 	case true != flipped:
-		t.Errorf("Name before date not matched\n");
-
-
+		t.Errorf("Name before date not matched\n")
 
 	}
 	fmt.Println("True: ", passTest1)

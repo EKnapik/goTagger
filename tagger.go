@@ -58,7 +58,7 @@ type Tagger struct {
 	Dictionary  map[string][]TagFrequency
 	TransMatrix [][]float32
 	// for the copyright extraction
-	CopyrightDFA map[Tri]int
+	CopyrightDFA  map[Tri]int
 	CopyrightSyms string
 }
 

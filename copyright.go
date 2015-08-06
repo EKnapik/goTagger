@@ -80,9 +80,9 @@ func (copyrightTagger *Tagger) Match(inBytes []byte) bool {
 		return false
 	}
 
-	for ;lastCheckedByte < len(inBytes); {
+	for lastCheckedByte < len(inBytes) {
 		// this is shifting the window based on a period followed by space
-		for ;curByte < len(inBytes); {
+		for curByte < len(inBytes) {
 			if inBytes[curByte] == byte('.') {
 				if curByte+1 < len(inBytes) && inBytes[curByte+1] == byte(' ') {
 					curByte++
