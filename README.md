@@ -9,11 +9,13 @@ symbols which could be bad for possessives, contractions, compounds, and others
 but could be easily modified to split on specific symbols.
 
 New( path to corpus for tagging (string) );
+
 	Takes the path to the corpus to create the tagger module from. This
 	must be a string and this will return an initialized tagger module
 	that the following functions can be called on.
 
 TagBytes( raw byte slice );
+
 	Returns a slice of Tagged Word objects that have the word, part of
 	speech tag, and the byte offeset in the original slice.
 
