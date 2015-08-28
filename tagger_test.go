@@ -81,7 +81,6 @@ func TestMain(t *testing.T) {
 	passTest2 := copyrightTagger.Match([]byte("Copyright (c) IBM       Corporation, 2003,   2008.  All rights reserved.   --")) //saying to save tagged array
 	passTest2Ext := copyrightTagger.Extract([]byte("Copyright (c) IBM       Corporation, 2003,   2008.  All rights reserved.   --"))
 	passTest3 := copyrightTagger.Match([]byte(" Â© 2001-2014 Python Software Foundation</string>")) // staying to save the tagged array
-	passTest4 := copyrightTagger.Match([]byte(" Â© 2001-2014 Python Software Foundation</string>"))
 	passTest3Ext := copyrightTagger.Extract([]byte(" © 2001-2014 Python Software Foundation</string>"))
 	complexExtract := copyrightTagger.Extract([]byte("some stuff here. \\(co Exablox and Pixar 2018 with the Datto corp. In accordance with this laa balh"))
 	passTest5 := copyrightTagger.Extract([]byte(" Â© 2001-2014 Python Software Foundation</string>"))
@@ -102,6 +101,8 @@ func TestMain(t *testing.T) {
 	failTest13 := copyrightTagger.Extract([]byte("# ifdef _SC_PAGESIZE\n#  define getpagesize() sysconf(_SC_PAGESIZE)\n# else /* no _SC_PAGESIZE */\n#  ifdef HAVE_SYS_PARAM_H\n#   include <sys/param.h>\n#   ifdef EXEC_PAGESIZE\n#    define getpagesize() EXEC_PAGESIZE\n#   else /* no EXEC_PAGESIZE */\n#    ifdef NBPG\n#     define getpagesize() NBPG * CLSIZE\n#     ifndef CLSIZE\n#      define CLSIZE 1\n#     endif /* no CLSIZE */\n#    else /* no NBPG */\n#     ifdef NBPC\n#      define getpagesize() NBPC\n#     else /* no NBPC */\n#      ifdef PAGESIZE\n#       define getpagesize() PAGESIZE\n#      endif /* PAGESIZE */\n#     endif /* no NBPC */\n#    endif /* no NBPG */\n#   endif /* no EXEC_PAGESIZE */\n#  else /* no HAVE_SYS_PARAM_H */\n#   define getpagesize() 8192	/* punt totally */\n#  endif /* no HAVE_SYS_PARAM_H */\n# endif /* no _SC_PAGESIZE */"))
 	failTest14 := copyrightTagger.Extract([]byte("#???????k(?P(???-[?477?????????=?|?ʡ?zRRR?p?B?|^^ޚ5k\n                                                                                                                               RQ??+W?d?͛7?\\?R?P?????}?5@4?W_ϔ?8J`?V>?h?V?\n                                 6?J??????V(x?}?l???)HC??̟?+???p?f>/?5k\n                                                                      ?8+W\"??y3+W??@?>?oaK3?𢡊?????|?ʡ?zRB?Bj???[??T`%+e?6?y%+?cCq?ĉI?&????<yR?G2???ѣ?|?j?Pv=?{?nFF?F>&&?7?0?=?ĉ>?8q?':????tݸq???a??ūV?1b???^TT4iҤ??<?\n                                                                              EEE?_?>66V;?ر#F8p???~????????W_?O7n?,?U0⑵&A??'?`=?v??S????е?Ϡ?                                                                                                           8?x1?V1b??~?\"&MB}??????v??v\n  ?MA??II!;?????op???,^Ū?P?؋(?Ĥ<?1E?z?????Ʊ?                                                                   ?!???M?W]????z\n\n                                                                                                                             ?1cƜ:u???V?>ح[?8???D???&L?????Ϛ5ˀ?????_?????????7??ꕱ?qNN???pjj?T*ճ>???>}??/???????wU??	=?!?Q??T??ݣC?H???<?B?*??~\"??????ޙ75?T??\"z?3}:_|?????tm?q9?v©?J???"))
 
+
+
 	fmt.Print("\n")
 	switch {
 	case true != copyrightSymbol:
@@ -114,24 +115,36 @@ func TestMain(t *testing.T) {
 		t.Errorf("lower case c not matched\n")
 	case true != flipped:
 		t.Errorf("Name before date not matched\n")
+	case true != passTest1:
+		t.Errorf("Several companies failed\n")
+	case true != passTest2:
+		t.Errorf("Extra spaces failed to pass\n")
+	case true != passTest3:
+		t.Errorf("Copyright symbol\n")
+	case true != passTest6:
+		t.Errorf("Compression on appostrophe test failed\n")
+	case false != none:
+		t.Errorf("No notice failed\n")
+	case false != failTest1:
+		t.Errorf("Copyright but nothing else\n")
+	case false != failTest2:
+		t.Errorf("Percent character\n")
+	case false != failTest3:
+		t.Errorf("Propper noun, with symbols\n")
+	case false != failTest4:
+		t.Errorf("(c) notified as true\n")
+	case false != failTest5:
+		t.Errorf("Accepted C # define\n")
+	case false != failTest6:
+		t.Errorf("Unicode conversion\n")
+	case false != failTest7:
+		t.Errorf("Copyright sign false positive\n")
+	case false != failTest9:
+		t.Errorf("Open parenthesis repetition\n")
+	case false != failTest11:
+		t.Errorf("Open and Close parenthsis repetition\n")
 
 	}
-	fmt.Println("True: ", passTest1)
-	fmt.Println("True: ", passTest2)
-	fmt.Println("True: ", passTest3)
-	fmt.Println("True: ", passTest4)
-	fmt.Println("True: ", passTest6)
-
-	fmt.Println("False: ", none)
-	fmt.Println("False: ", failTest1)
-	fmt.Println("False: ", failTest2)
-	fmt.Println("False: ", failTest3)
-	fmt.Println("False: ", failTest4)
-	fmt.Println("False: ", failTest5)
-	fmt.Println("False: ", failTest6)
-	fmt.Println("False: ", failTest7)
-	fmt.Println("False: ", failTest9)
-	fmt.Println("False: ", failTest11)
 
 	fmt.Println("Extracting")
 	fmt.Println(extractString)
@@ -145,8 +158,6 @@ func TestMain(t *testing.T) {
 	fmt.Println("Odd symbols: ", failTest14)
 	fmt.Println("Start: ", passTest7)
 
-	fmt.Println("CURIOUS RESULTS:")
-	fmt.Println("Should Fail: ", failTest7)
 	fmt.Println("Should pass: ", failTest8)
 
 	fmt.Println("FINDING INDICIES")
