@@ -453,7 +453,7 @@ func (copyrightTagger *Tagger) Extract(inBytes []byte) string {
 		}
 		// Because of multiple notices right after the other here's a check...
 		if currentState == START || currentState == LPAREN || currentState == CSYM {
-			if len(potentialNotice) > 2 { // Does it seem like something useful has been captured
+			if len(potentialNotice) > 3 { // Does it seem like something useful has been captured
 				extractedNotice = append(extractedNotice, potentialNotice...)
 				potentialNotice = nil
 				potentialNotice = append(potentialNotice, taggedWord)
@@ -508,7 +508,7 @@ func (copyrightTagger *Tagger) FindAllIndex(inBytes []byte) [][]int {
 		}
 		// Because of multiple notices right after the other here's a check...
 		if currentState == START || currentState == LPAREN || currentState == CSYM {
-			if len(potentialNotice) > 2 { // Does it seem like something useful has been captured
+			if len(potentialNotice) > 3 { // Does it seem like something useful has been captured
 				indicies = append(indicies, []int{potentialNotice[0].byteStart, taggedWord.byteStart})
 				potentialNotice = nil
 				potentialNotice = append(potentialNotice, taggedWord)
