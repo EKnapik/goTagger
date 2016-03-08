@@ -63,8 +63,8 @@ type Tagger struct {
 }
 
 type TaggedWord struct {
-	word      string
-	tag       string
+	Word      string `json:"word"`
+	Tag       string `json:"tag"`
 	byteStart int
 }
 
@@ -382,23 +382,23 @@ func mkWrdArray(rawBytes []byte) []TaggedWord {
 	for currByte < len(rawBytes) {
 		if isSpace(rawBytes[currByte]) {
 			if wordStart != currByte { // add the word if I can
-				taggedWords = append(taggedWords, TaggedWord{word: string(rawBytes[wordStart:currByte]), tag: "", byteStart: wordStart})
+				taggedWords = append(taggedWords, TaggedWord{Word: string(rawBytes[wordStart:currByte]), Tag: "", byteStart: wordStart})
 			}
 			currByte++
 			wordStart = currByte
 		} else if isSymbol(rawBytes[currByte]) {
 			if wordStart != currByte { // add the word if I can
-				taggedWords = append(taggedWords, TaggedWord{word: string(rawBytes[wordStart:currByte]), tag: "", byteStart: wordStart})
+				taggedWords = append(taggedWords, TaggedWord{Word: string(rawBytes[wordStart:currByte]), Tag: "", byteStart: wordStart})
 			}
 			wordStart = currByte
 			currByte++
-			taggedWords = append(taggedWords, TaggedWord{word: string(rawBytes[wordStart:currByte]), tag: "", byteStart: wordStart})
+			taggedWords = append(taggedWords, TaggedWord{Word: string(rawBytes[wordStart:currByte]), Tag: "", byteStart: wordStart})
 			wordStart = currByte
 		} else {
 			currByte++
 		}
 	}
-	taggedWords = append(taggedWords, TaggedWord{word: string(rawBytes[wordStart:currByte]), tag: "", byteStart: wordStart})
+	taggedWords = append(taggedWords, TaggedWord{Word: string(rawBytes[wordStart:currByte]), Tag: "", byteStart: wordStart})
 	return taggedWords
 }
 
@@ -436,19 +436,19 @@ func (copyrightTagger *Tagger) TagBytes(rawBytes []byte) []TaggedWord {
 			var currTrans float32 = copyrightTagger.TransMatrix[lastBestTag][tagIndex]
 			var currProb float32 = lastBestProb * currTrans
 
-			if len(copyrightTagger.Dictionary[wrdArry[wrdIndex].word]) != 0 { // has the word been seen before?
-				if wrdArry[wrdIndex].word == "." || wrdArry[wrdIndex].word == "?" || wrdArry[wrdIndex].word == "!" {
+			if len(copyrightTagger.Dictionary[wrdArry[wrdIndex].Word]) != 0 { // has the word been seen before?
+				if wrdArry[wrdIndex].Word == "." || wrdArry[wrdIndex].Word == "?" || wrdArry[wrdIndex].Word == "!" {
 					sentMatrix[TagStrToInt["."]][wrdIndex+1] = 1.0
 				} else {
-					for _, tagObject := range copyrightTagger.Dictionary[wrdArry[wrdIndex].word] {
+					for _, tagObject := range copyrightTagger.Dictionary[wrdArry[wrdIndex].Word] {
 						if TagIntToStr[tagIndex] == tagObject.tag {
 							sentMatrix[tagIndex][wrdIndex+1] = currProb * tagObject.freq
 						}
 					}
 				}
 				// check for the word not carring about capitalization
-			} else if len(copyrightTagger.Dictionary[strings.ToLower(wrdArry[wrdIndex].word)]) != 0 {
-				for _, tagObject := range copyrightTagger.Dictionary[strings.ToLower(wrdArry[wrdIndex].word)] {
+			} else if len(copyrightTagger.Dictionary[strings.ToLower(wrdArry[wrdIndex].Word)]) != 0 {
+				for _, tagObject := range copyrightTagger.Dictionary[strings.ToLower(wrdArry[wrdIndex].Word)] {
 					if TagIntToStr[tagIndex] == tagObject.tag {
 						sentMatrix[tagIndex][wrdIndex+1] = currProb * tagObject.freq
 					}
@@ -457,7 +457,7 @@ func (copyrightTagger *Tagger) TagBytes(rawBytes []byte) []TaggedWord {
 				if currTrans >= 0.7 {
 					sentMatrix[tagIndex][wrdIndex+1] = currProb
 				} else {
-					likelyTag := tagUnkown(wrdArry[wrdIndex].word)
+					likelyTag := tagUnkown(wrdArry[wrdIndex].Word)
 					sentMatrix[TagStrToInt[likelyTag]][wrdIndex+1] = currProb * 0.95
 				}
 			}
@@ -477,7 +477,7 @@ func (copyrightTagger *Tagger) TagBytes(rawBytes []byte) []TaggedWord {
 		for tagIndex := 0; tagIndex < numOfTags; tagIndex++ {
 			if sentMatrix[tagIndex][wrdIndex+1] > tagProb {
 				tagProb = sentMatrix[tagIndex][wrdIndex+1]
-				wrdArry[wrdIndex].tag = TagIntToStr[tagIndex]
+				wrdArry[wrdIndex].Tag = TagIntToStr[tagIndex]
 			}
 		}
 	}
@@ -542,10 +542,10 @@ func compressNumInString(inSent []TaggedWord) []TaggedWord {
 
 	for _, taggedWord := range inSent {
 		// Make the transition to the next state based on the input
-		if taggedWord.tag == "." {
-			currentState = dfa[Tri{state: currentState, word: taggedWord.word, pos: taggedWord.tag}]
-		} else if taggedWord.tag == "cd" {
-			currentState = dfa[Tri{state: currentState, word: "X", pos: taggedWord.tag}]
+		if taggedWord.Tag == "." {
+			currentState = dfa[Tri{state: currentState, word: taggedWord.Word, pos: taggedWord.Tag}]
+		} else if taggedWord.Tag == "cd" {
+			currentState = dfa[Tri{state: currentState, word: "X", pos: taggedWord.Tag}]
 		} else {
 			currentState = dfa[Tri{state: currentState, word: "X", pos: "X"}]
 		}
@@ -555,7 +555,7 @@ func compressNumInString(inSent []TaggedWord) []TaggedWord {
 			finalSent = append(finalSent, saveNum...)
 			compNum = nil
 			saveNum = nil
-			compNum = append(compNum, taggedWord.word)
+			compNum = append(compNum, taggedWord.Word)
 			saveStartByte = taggedWord.byteStart
 			saveNum = append(saveNum, taggedWord)
 		} else if currentState == INTERM {
@@ -566,9 +566,9 @@ func compressNumInString(inSent []TaggedWord) []TaggedWord {
 			saveNum = nil
 			finalSent = append(finalSent, taggedWord)
 		} else if currentState == ACCEPT {
-			compNum = append(compNum, taggedWord.word)
+			compNum = append(compNum, taggedWord.Word)
 			saveNum = nil
-			saveNum = append(saveNum, TaggedWord{word: strings.Join(compNum, ""), tag: "cd", byteStart: saveStartByte})
+			saveNum = append(saveNum, TaggedWord{Word: strings.Join(compNum, ""), Tag: "cd", byteStart: saveStartByte})
 			currentState = START
 		}
 	}
@@ -591,29 +591,29 @@ func compressNP(inSent []TaggedWord) []TaggedWord {
 	var saveByteStart int
 	for _, taggedWord := range inSent {
 
-		if prevTag == "np" && taggedWord.word == "." {
+		if prevTag == "np" && taggedWord.Word == "." {
 			saveWord = append(saveWord, ".")
-			finalSent = append(finalSent, TaggedWord{word: strings.Join(saveWord, ""), tag: "np", byteStart: saveByteStart})
+			finalSent = append(finalSent, TaggedWord{Word: strings.Join(saveWord, ""), Tag: "np", byteStart: saveByteStart})
 			saveWord = nil
-		} else if prevTag == "np" && taggedWord.tag == "np" {
-			finalSent = append(finalSent, TaggedWord{word: strings.Join(saveWord, ""), tag: "np", byteStart: saveByteStart})
+		} else if prevTag == "np" && taggedWord.Tag == "np" {
+			finalSent = append(finalSent, TaggedWord{Word: strings.Join(saveWord, ""), Tag: "np", byteStart: saveByteStart})
 			saveWord = nil
-			saveWord = append(saveWord, taggedWord.word)
-		} else if prevTag == "np" && taggedWord.word != "." {
-			finalSent = append(finalSent, TaggedWord{word: strings.Join(saveWord, ""), tag: "np", byteStart: saveByteStart}, taggedWord)
+			saveWord = append(saveWord, taggedWord.Word)
+		} else if prevTag == "np" && taggedWord.Word != "." {
+			finalSent = append(finalSent, TaggedWord{Word: strings.Join(saveWord, ""), Tag: "np", byteStart: saveByteStart}, taggedWord)
 			saveWord = nil
-		} else if taggedWord.tag == "np" {
-			saveWord = append(saveWord, taggedWord.word)
+		} else if taggedWord.Tag == "np" {
+			saveWord = append(saveWord, taggedWord.Word)
 		} else {
 			finalSent = append(finalSent, taggedWord)
 		}
 
 		saveByteStart = taggedWord.byteStart
-		prevTag = taggedWord.tag
+		prevTag = taggedWord.Tag
 
 	}
 	if prevTag == "np" {
-		finalSent = append(finalSent, TaggedWord{word: strings.Join(saveWord, ""), tag: "np", byteStart: saveByteStart})
+		finalSent = append(finalSent, TaggedWord{Word: strings.Join(saveWord, ""), Tag: "np", byteStart: saveByteStart})
 	}
 
 	return finalSent
@@ -622,7 +622,18 @@ func compressNP(inSent []TaggedWord) []TaggedWord {
 func toString(inSent []TaggedWord) string {
 	var finalSent = make([]string, 0)
 	for _, taggedWord := range inSent {
-		finalSent = append(finalSent, taggedWord.word)
+		finalSent = append(finalSent, taggedWord.Word)
 	}
 	return strings.Join(finalSent, " ")
+}
+
+func (t *TaggedWord) GetWord() string {
+
+	return t.Word
+
+}
+func (t *TaggedWord) GetTag () string{
+
+	return t.Tag
+
 }
