@@ -108,12 +108,12 @@ func (copyrightTagger *Tagger) Match(inBytes []byte) bool {
 				potentialNotice = nil
 			}
 			// Transition to the next state given current 'input'
-			if strings.ToLower(taggedWord.word) == "copyright" || strings.ToLower(taggedWord.word) == "c" {
-				currentState = copyrightTagger.CopyrightDFA[Tri{currentState, strings.ToLower(taggedWord.word), taggedWord.tag}]
-			} else if strings.Contains(taggedWord.word, "©") {
+			if strings.ToLower(taggedWord.Word) == "copyright" || strings.ToLower(taggedWord.Word) == "c" {
+				currentState = copyrightTagger.CopyrightDFA[Tri{currentState, strings.ToLower(taggedWord.Word), taggedWord.Tag}]
+			} else if strings.Contains(taggedWord.Word, "©") {
 				currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "©", "sym"}]
-			} else if strings.Contains(copyrightTagger.CopyrightSyms, taggedWord.tag) {
-				currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", taggedWord.tag}]
+			} else if strings.Contains(copyrightTagger.CopyrightSyms, taggedWord.Tag) {
+				currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", taggedWord.Tag}]
 			} else {
 				currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", "X"}]
 			}
@@ -442,12 +442,12 @@ func (copyrightTagger *Tagger) Extract(inBytes []byte) string {
 			potentialNotice = nil
 		}
 		// Transition to the next state given current 'input'
-		if strings.ToLower(taggedWord.word) == "copyright" || strings.ToLower(taggedWord.word) == "c" {
-			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, strings.ToLower(taggedWord.word), taggedWord.tag}]
-		} else if strings.Contains(taggedWord.word, "©") {
+		if strings.ToLower(taggedWord.Word) == "copyright" || strings.ToLower(taggedWord.Word) == "c" {
+			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, strings.ToLower(taggedWord.Word), taggedWord.Tag}]
+		} else if strings.Contains(taggedWord.Word, "©") {
 			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "©", "sym"}]
-		} else if strings.Contains(copyrightTagger.CopyrightSyms, taggedWord.tag) {
-			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", taggedWord.tag}]
+		} else if strings.Contains(copyrightTagger.CopyrightSyms, taggedWord.Tag) {
+			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", taggedWord.Tag}]
 		} else {
 			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", "X"}]
 		}
@@ -497,12 +497,12 @@ func (copyrightTagger *Tagger) FindAllIndex(inBytes []byte) [][]int {
 			potentialNotice = nil
 		}
 		// Transition to the next state given current 'input'
-		if strings.ToLower(taggedWord.word) == "copyright" || strings.ToLower(taggedWord.word) == "c" {
-			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, strings.ToLower(taggedWord.word), taggedWord.tag}]
-		} else if strings.Contains(taggedWord.word, "©") {
+		if strings.ToLower(taggedWord.Word) == "copyright" || strings.ToLower(taggedWord.Word) == "c" {
+			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, strings.ToLower(taggedWord.Word), taggedWord.Tag}]
+		} else if strings.Contains(taggedWord.Word, "©") {
 			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "©", "sym"}]
-		} else if strings.Contains(copyrightTagger.CopyrightSyms, taggedWord.tag) {
-			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", taggedWord.tag}]
+		} else if strings.Contains(copyrightTagger.CopyrightSyms, taggedWord.Tag) {
+			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", taggedWord.Tag}]
 		} else {
 			currentState = copyrightTagger.CopyrightDFA[Tri{currentState, "X", "X"}]
 		}
